@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .navBtn {
+    @apply hidden h-6 md:inline-flex hover:scale-125 transition-all duration-150 ease-out cursor-pointer;
+  }
+  .btn {
+    @apply h-7 hover:scale-125 cursor-pointer transition-all duration-200 ease-out;
+  }
+}
+
+.instagram-logo {
+  background-position: 0 -130px;
+  height: 51px;
+  width: 175px;
+  background-image: url(https://bit.ly/3v2LT17);
+}
+
+.facebook-logo {
+  background-position: -414px -259px;
+  height: 16px;
+  width: 16px;
+  background-image: url(https://bit.ly/3v2LT17);
+}
+
+.play-store-logo {
+  background-size: contain;
+  height: 40px;
+  width: 134px;
+  background-image: url(https://instagram.com/static/images/appstore-install-badges/badge_android_english-en.png/e9cd846dc748.png);
+}
+
+.apple-store-logo {
+  background-size: contain;
+  height: 40px;
+  width: 134px;
+  background-image: url(https://instagram.com/static/images/appstore-install-badges/badge_ios_english-en.png/180ae7a0bcf7.png);
+}
