@@ -37,6 +37,7 @@ const Suggestions = () => {
             <div className="flex flex-1">
               <img
                 className="h-10 w-10 rounded-full border p-[2px]"
+                loading="lazy"
                 src={profile.avatar}
                 alt={profile.username.toLowerCase()}
               />

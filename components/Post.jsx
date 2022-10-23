@@ -37,12 +37,17 @@ const Post = ({ id, username, userImg, img, caption, handleClick }) => {
     <div className="bg-white my-7 border rounded-sm">
       {/* Header */}
       <div className="flex items-center p-5">
-        <img className="h-10 w-10 rounded-full" src={userImg} alt={username} />
+        <img
+          className="h-10 w-10 rounded-full"
+          loading="lazy"
+          src={userImg}
+          alt={username}
+        />
         <p className="flex-1 font-bold">{username}</p>
         <EllipsisHorizontalIcon className="h-5" />
       </div>
       {/* img */}
-      <img src={img} className="object-cover w-full" alt="" />
+      <img src={img} loading="lazy" className="object-cover w-full" alt="" />
 
       {/* Buttons */}
       <div className="flex justify-between px-4 pt-4">

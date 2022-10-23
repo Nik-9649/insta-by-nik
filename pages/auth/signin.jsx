@@ -6,7 +6,12 @@ export default function SignIn({ providers }) {
     <>
       <Header />
       <div className="flex flex-col items-center justify-center min-h-screen py-2 -mt-24 lg:-mt-32  px-14 text-center">
-        <img className="w-80" src="https://links.papareact.com/ocw" alt="" />
+        <img
+          className="w-80"
+          src="https://links.papareact.com/ocw"
+          loading="lazy"
+          alt=""
+        />
         <p className="font-xs italic">
           This is not the real app, it is built for educational purposes only
         </p>

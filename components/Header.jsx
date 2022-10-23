@@ -8,14 +8,19 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 const Header = () => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-50">
       <div className="flex justify-between max-w-6xl mx-5 lg:mx-auto">
         {/* Left */}
-        <div className="relative hidden lg:inline-grid w-24 cursor-pointer">
+        <div
+          onClick={() => router.push("/")}
+          className="relative hidden lg:inline-grid w-24 cursor-pointer"
+        >
           <Image
             src="https://links.papareact.com/ocw"
             objectFit="contain"
@@ -23,7 +28,10 @@ const Header = () => {
           />
         </div>
 
-        <div className="relative lg:hidden w-10 flex-shrink-0 cursor-pointer">
+        <div
+          onClick={() => router.push("/")}
+          className="relative lg:hidden w-10 flex-shrink-0 cursor-pointer"
+        >
           <Image
             src="https://links.papareact.com/jjm"
             objectFit="contain"
@@ -62,7 +70,7 @@ const Header = () => {
         {/* Right */}
         {/* Home Icon */}
         <div className="flex items-center justify-end space-x-4">
-          <HomeIcon className="navBtn" />
+          <HomeIcon onClick={() => router.push("/")} className="navBtn" />
           <Bars3Icon className="h-6 md:hidden cursor-pointer" />
 
           {session ? (
@@ -86,6 +94,7 @@ const Header = () => {
               <HeartIcon className="navBtn" />
               <img
                 onClick={signOut}
+                loading="lazy"
                 className="h-6 w-6 cursor-pointer rounded-full"
                 src={session?.user?.image}
                 alt={session?.user?.name}
