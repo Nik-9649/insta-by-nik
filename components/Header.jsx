@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Bars3Icon, HomeIcon } from "@heroicons/react/24/solid";
 import {
@@ -9,7 +11,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { modalState } from "../atoms/modalAtom";
+
 const Header = () => {
+  const [open, setOpen] = useRecoilState(modalState);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -19,21 +25,25 @@ const Header = () => {
         {/* Left */}
         <div
           onClick={() => router.push("/")}
-          className="relative hidden lg:inline-grid w-24 cursor-pointer"
+          className="relative mt-5 hidden lg:inline-grid cursor-pointer"
         >
           <Image
             src="https://links.papareact.com/ocw"
             objectFit="contain"
             layout="fill"
+            width={103}
+            height={36}
           />
         </div>
 
         <div
           onClick={() => router.push("/")}
-          className="relative lg:hidden w-10 flex-shrink-0 cursor-pointer"
+          className="relative lg:hidden mt-5 flex-shrink-0 cursor-pointer"
         >
           <Image
             src="https://links.papareact.com/jjm"
+            width={40}
+            height={40}
             objectFit="contain"
             layout="fill"
           />
@@ -89,7 +99,10 @@ const Header = () => {
                   3
                 </div>
               </div>
-              <PlusIcon className="navBtn border border-black rounded-md" />
+              <PlusIcon
+                onClick={() => setOpen(true)}
+                className="navBtn border border-black rounded-md"
+              />
               <UserGroupIcon className="navBtn rounded-full" />
               <HeartIcon className="navBtn" />
               <img

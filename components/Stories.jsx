@@ -1,3 +1,5 @@
+"use client";
+
 import { faker } from "@faker-js/faker";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";

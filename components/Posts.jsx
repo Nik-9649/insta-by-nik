@@ -1,40 +1,38 @@
 import { CheckCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { db } from "../firebase";
 import Post from "./Post";
 
-const DUMMY_DATA = [
-  {
-    id: 1,
-    username: "melatoninik",
-    userImg: "https://cutt.ly/4BFkfRh",
-    img: "https://cutt.ly/4BFkfRh",
-    caption: "...",
-  },
-  {
-    id: 2,
-    username: "typical.egirl",
-    userImg:
-      "https://i.pinimg.com/736x/70/b5/0d/70b50dade1a8742a8ee0ef4f4bbc4f15.jpg",
-    img: "https://i.pinimg.com/736x/70/b5/0d/70b50dade1a8742a8ee0ef4f4bbc4f15.jpg",
-    caption: "new pfp UwU",
-  },
-];
-
 const Posts = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(collection(db, "posts"), orderBy("timestamp", "desc")),
+        (snapshot) => {
+          setPosts(snapshot.docs);
+        }
+      ),
+
+    [db]
+  );
+
   const handleClick = (e) => {
     e.preventDefault();
   };
 
   return (
     <div>
-      {DUMMY_DATA.map((post) => (
+      {posts.map((post) => (
         <Post
           key={post.id}
           id={post.id}
-          username={post.username}
-          userImg={post.userImg}
-          img={post.img}
-          caption={post.caption}
-          handleClick={handleClick}
+          username={post.data().username}
+          userImg={post.data().profileImg}
+          img={post.data().image}
+          caption={post.data().caption}
         />
       ))}
       <div className="items-center text-center py-5 bg-white">
