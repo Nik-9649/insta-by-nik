@@ -220,7 +220,9 @@ const Post = ({ id, username, userImg, img, caption, timestamp }) => {
       )}
       {/* Time stamp */}
       <Moment
-        className={`ml-10 ${!session && "mb-2"} h-20 text-sm text-gray-500`}
+        className={`ml-10 ${
+          !session && "mb-2 pb-2"
+        } h-20 text-sm text-gray-500`}
         fromNow
       >
         {timestamp}
