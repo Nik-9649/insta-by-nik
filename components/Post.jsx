@@ -3,13 +3,13 @@
 import {
   BookmarkIcon,
   ChatBubbleOvalLeftIcon,
+  ChevronDownIcon,
   EllipsisHorizontalIcon,
   FaceSmileIcon,
   HeartIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
-import { Emoji, EmojiStyle } from "emoji-picker-react";
 import dynamic from "next/dynamic";
 
 const EmojiPicker = dynamic(
@@ -20,15 +20,18 @@ const EmojiPicker = dynamic(
 );
 
 import { useEffect, useState } from "react";
-import { Popover } from "@headlessui/react";
+import { Disclosure, Popover } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import Moment from "react-moment";
@@ -39,21 +42,50 @@ const Post = ({ id, username, userImg, img, caption }) => {
   const [comments, setComments] = useState([]);
 
   const [selectedEmoji, setSelectedEmoji] = useState("");
-  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState([]);
+  const [hasLiked, setHasLiked] = useState(false);
 
   useEffect(
     () =>
       onSnapshot(
         query(
           collection(db, "posts", id, "comments"),
-          orderBy("timestamp", "desc")
+          orderBy("timestamp", "asc")
         ),
         (snapshot) => {
           setComments(snapshot.docs);
         }
       ),
-    [db]
+    [db, id]
   );
+
+  useEffect(
+    () =>
+      onSnapshot(collection(db, "posts", id, "likes"), (snapshot) =>
+        setLikes(snapshot.docs)
+      ),
+    [db, id]
+  );
+  console.log(likes);
+
+  useEffect(
+    () =>
+      setHasLiked(
+        likes.findIndex((like) => like.id === session?.user?.uid) !== -1
+      ),
+    [likes]
+  );
+
+  const likePost = async () => {
+    if (hasLiked) {
+      await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));
+    } else {
+      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
+        username: session.user.username,
+        userImg: session.user.image,
+      });
+    }
+  };
 
   const sendComment = async (e) => {
     e.preventDefault();
@@ -72,10 +104,6 @@ const Post = ({ id, username, userImg, img, caption }) => {
   function onClick(emojiData, event) {
     setSelectedEmoji(emojiData.unified);
   }
-
-  const toggleLiked = () => {
-    setLiked((current) => !current);
-  };
 
   return (
     <div className="bg-white my-7 border rounded-sm">
@@ -97,14 +125,14 @@ const Post = ({ id, username, userImg, img, caption }) => {
       {session && (
         <div className="flex justify-between px-4 pt-4">
           <div className="flex space-x-4">
-            <div onClick={toggleLiked}>
-              {liked === false ? (
-                <HeartIcon className="btn" />
-              ) : (
-                <HeartIconFilled className="btn text-red-500" />
-              )}
-            </div>
-
+            {hasLiked ? (
+              <HeartIconFilled
+                onClick={likePost}
+                className="btn text-red-500"
+              />
+            ) : (
+              <HeartIcon onClick={likePost} className="btn" />
+            )}
             <ChatBubbleOvalLeftIcon className="btn" />
             <PaperAirplaneIcon className="btn -rotate-45" />
           </div>
@@ -114,6 +142,38 @@ const Post = ({ id, username, userImg, img, caption }) => {
 
       {/* caption */}
       <p className="p-5 truncate">
+        {likes.length > 0 && (
+          <p className="font-bold mb-1 ">
+            {likes.length}
+            <Disclosure>
+              <Disclosure.Button className="px-2"> likes</Disclosure.Button>
+              <Disclosure.Panel className="text-gray-500">
+                <div className="flex items-center space-x-1">
+                  <span className="text-black font-bold my-2">liked by</span>
+                </div>
+                <div className="">
+                  {likes.map((like) => (
+                    <div
+                      key={like.data().username}
+                      className="flex items-center space-x-2 mb-3"
+                    >
+                      <img
+                        className="h-7 rounded-full"
+                        src={like.data().userImg}
+                        alt=""
+                      />
+                      <p className="text-sm flex-1 ">
+                        <span className="font-bold px-2">
+                          {like.data().username}
+                        </span>
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </Disclosure.Panel>
+            </Disclosure>
+          </p>
+        )}
         <span className="font-bold mr-1">{username} </span>
         {caption}
       </p>
@@ -134,7 +194,9 @@ const Post = ({ id, username, userImg, img, caption }) => {
                 </span>
                 {comment.data().comment}
               </p>
-              <Moment fromNow>{comment.data().timestamp?.toDate()}</Moment>
+              <Moment className="pr-5 text-xs" fromNow>
+                {comment.data().timestamp?.toDate()}
+              </Moment>
             </div>
           ))}
         </div>
