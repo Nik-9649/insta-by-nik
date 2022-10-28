@@ -219,7 +219,10 @@ const Post = ({ id, username, userImg, img, caption, timestamp }) => {
         </div>
       )}
       {/* Time stamp */}
-      <Moment className="ml-10 h-20 text-sm text-gray-500" fromNow>
+      <Moment
+        className={`ml-10 ${!session && "mb-2"} h-20 text-sm text-gray-500`}
+        fromNow
+      >
         {timestamp}
       </Moment>
 
