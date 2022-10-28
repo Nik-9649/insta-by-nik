@@ -36,10 +36,11 @@ import {
 import { db } from "../firebase";
 import Moment from "react-moment";
 
-const Post = ({ id, username, userImg, img, caption }) => {
+const Post = ({ id, username, userImg, img, caption, timestamp }) => {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const [selectedEmoji, setSelectedEmoji] = useState("");
   const [likes, setLikes] = useState([]);
@@ -180,27 +181,47 @@ const Post = ({ id, username, userImg, img, caption }) => {
 
       {/* comments */}
       {comments.length > 0 && (
-        <div className="ml-10 h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
-          {comments.map((comment) => (
-            <div key={comment.id} className="flex items-center space-x-2 mb-3">
-              <img
-                className="h-7 rounded-full"
-                src={comment.data().userImg}
-                alt=""
-              />
-              <p className="text-sm flex-1 ">
-                <span className="font-bold px-2">
-                  {comment.data().username}
-                </span>
-                {comment.data().comment}
-              </p>
-              <Moment className="pr-5 text-xs" fromNow>
-                {comment.data().timestamp?.toDate()}
-              </Moment>
-            </div>
-          ))}
+        <div className="ml-10 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
+          <Disclosure>
+            {!open ? (
+              <Disclosure.Button onClick={() => setOpen(true)} className="">
+                View all {comments.length} comments
+              </Disclosure.Button>
+            ) : (
+              <Disclosure.Button onClick={() => setOpen(false)} className="">
+                Hide comments
+              </Disclosure.Button>
+            )}
+            <Disclosure.Panel>
+              {comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="flex items-center space-x-2 mb-3"
+                >
+                  <img
+                    className="h-7 rounded-full"
+                    src={comment.data().userImg}
+                    alt=""
+                  />
+                  <p className="text-sm flex-1 ">
+                    <span className="font-bold px-2">
+                      {comment.data().username}
+                    </span>
+                    {comment.data().comment}
+                  </p>
+                  <Moment className="pr-5 text-xs" fromNow>
+                    {comment.data().timestamp?.toDate()}
+                  </Moment>
+                </div>
+              ))}
+            </Disclosure.Panel>
+          </Disclosure>
         </div>
       )}
+      {/* Time stamp */}
+      <Moment className="ml-10 h-20 text-sm text-gray-500" fromNow>
+        {timestamp}
+      </Moment>
 
       {/* input box */}
       {session && (

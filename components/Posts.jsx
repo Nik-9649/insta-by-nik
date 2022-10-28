@@ -33,6 +33,7 @@ const Posts = () => {
           userImg={post.data().profileImg}
           img={post.data().image}
           caption={post.data().caption}
+          timestamp={post.data().timestamp?.toDate()}
         />
       ))}
       <div className="items-center text-center py-5 bg-white">
